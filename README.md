@@ -7,13 +7,19 @@ analysis in this repository.
 
 ## Current checkpoint
 
-Phase 1 establishes trustworthy latency measurements before any GPU benchmark:
+Phase 2 establishes trustworthy streamed-response measurement before any GPU
+benchmark:
 
 - `RequestTiming` calculates time to first token (TTFT), time per output token
   (TPOT), and end-to-end latency.
-- `StreamTimer` records streamed token events with a monotonic clock.
-- Tests cover the metric formulas, invalid event order, single-token output,
-  and a deterministic streamed-token timeline.
+- `StreamTimer` records the first non-empty output event with a monotonic clock,
+  independently from final token accounting.
+- `SSEDecoder` handles arbitrary network byte boundaries, split UTF-8 code
+  points, CRLF, and multi-line `data:` fields.
+- `OpenAIStreamAccumulator` joins content deltas and uses the server's final
+  `usage.completion_tokens` instead of treating transport events as tokens.
+- Tests cover the metric formulas and a complete mock
+  `bytes -> SSE -> OpenAI delta -> metrics` stream.
 
 The repository does **not** claim vLLM or SGLang performance results yet.
 Local development currently validates benchmark correctness on Apple Silicon;
@@ -52,6 +58,11 @@ E2E  = request_completed_at - request_started_at
 TPOT is undefined when `N == 1`, because there is no inter-token interval
 after the first token.
 
+An SSE event is a transport unit, not a tokenizer token. The current OpenAI
+stream accumulator therefore requires exact `usage.completion_tokens` from the
+server. A future model adapter may provide the exact target tokenizer when a
+server cannot return usage.
+
 ## Project boundary
 
 Upstream projects provide the serving engines:
@@ -71,7 +82,7 @@ This repository owns:
 ## Roadmap
 
 - [x] Define and test TTFT, TPOT, and end-to-end latency
-- [ ] Measure a local mock SSE stream end to end
+- [x] Measure a local mock SSE stream end to end
 - [ ] Run a controlled vLLM GPU baseline
 - [ ] Sweep prompt length, output length, and concurrency
 - [ ] Evaluate prefix caching and chunked prefill

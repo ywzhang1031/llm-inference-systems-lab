@@ -7,27 +7,22 @@ from .metrics import RequestTiming
 
 
 class StreamTimer:
-    """Record token events using a monotonic clock."""
+    """Record the first streamed output and request completion times."""
 
     def __init__(self, clock: Callable[[], float] = perf_counter) -> None:
         self._clock = clock
         self._started_at_s = clock()
         self._first_token_at_s: float | None = None
-        self._output_tokens = 0
         self._finished = False
 
-    def record_tokens(self, count: int) -> None:
+    def mark_first_token(self) -> None:
         if self._finished:
-            raise RuntimeError("cannot record tokens after the request is finished")
-        if count < 1:
-            raise ValueError("token count must be at least 1")
+            raise RuntimeError("cannot record output after the request is finished")
 
-        observed_at_s = self._clock()
         if self._first_token_at_s is None:
-            self._first_token_at_s = observed_at_s
-        self._output_tokens += count
+            self._first_token_at_s = self._clock()
 
-    def finish(self) -> RequestTiming:
+    def finish(self, *, output_tokens: int) -> RequestTiming:
         if self._finished:
             raise RuntimeError("request timing has already been finished")
         if self._first_token_at_s is None:
@@ -37,7 +32,7 @@ class StreamTimer:
             started_at_s=self._started_at_s,
             first_token_at_s=self._first_token_at_s,
             completed_at_s=self._clock(),
-            output_tokens=self._output_tokens,
+            output_tokens=output_tokens,
         )
         self._finished = True
         return timing

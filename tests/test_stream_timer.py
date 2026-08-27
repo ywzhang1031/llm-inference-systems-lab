@@ -12,13 +12,12 @@ class StepClock:
 
 
 class StreamTimerTests(unittest.TestCase):
-    def test_records_first_token_and_completion_times(self) -> None:
-        clock = StepClock(10.0, 10.2, 10.25, 15.2)
+    def test_separates_first_token_time_from_final_token_count(self) -> None:
+        clock = StepClock(10.0, 10.2, 15.2)
         timer = StreamTimer(clock=clock)
 
-        timer.record_tokens(1)
-        timer.record_tokens(100)
-        timing = timer.finish()
+        timer.mark_first_token()
+        timing = timer.finish(output_tokens=101)
 
         self.assertAlmostEqual(timing.ttft_ms, 200.0)
         self.assertAlmostEqual(timing.tpot_ms, 50.0)
@@ -26,10 +25,10 @@ class StreamTimerTests(unittest.TestCase):
         self.assertEqual(timing.output_tokens, 101)
 
     def test_rejects_completion_without_output_tokens(self) -> None:
-        timer = StreamTimer(clock=StepClock(1.0, 1.1))
+        timer = StreamTimer(clock=StepClock(1.0))
 
         with self.assertRaisesRegex(RuntimeError, "no output tokens"):
-            timer.finish()
+            timer.finish(output_tokens=1)
 
 
 if __name__ == "__main__":
