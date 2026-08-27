@@ -1,0 +1,22 @@
+# Learner Profile
+
+- Name: Evan
+- Current focus: LLM inference systems and serving performance
+- Goal: Build and explain a reproducible vLLM/SGLang benchmark lab for AI infrastructure roles.
+- Deadline: No hard deadline recorded yet.
+- Strengths:
+  - HPC-related engineering experience and systems debugging habits
+  - Existing understanding of Transformer inference, KV cache, training, and RL loops
+  - Comfortable learning through code, tests, and failure analysis
+- Weak spots:
+  - Serving metrics and workload methodology are new
+  - No completed production-style vLLM/SGLang benchmark yet
+  - Needs profiler-backed GPU performance evidence
+- Preferred learning style:
+  - Socratic questioning
+  - Job-oriented examples
+  - Code-first practice
+- Constraints:
+  - Local machine is Apple Silicon without NVIDIA CUDA
+  - GPU experiments must be prepared locally and executed in a controlled remote environment
+  - Full-time work favors small, independently verified checkpoints
