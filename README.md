@@ -7,7 +7,7 @@ analysis in this repository.
 
 ## Current checkpoint
 
-Phase 2 establishes trustworthy streamed-response measurement before any GPU
+Phase 3 establishes trustworthy HTTP request outcomes before any GPU
 benchmark:
 
 - `RequestTiming` calculates time to first token (TTFT), time per output token
@@ -18,8 +18,13 @@ benchmark:
   points, CRLF, and multi-line `data:` fields.
 - `OpenAIStreamAccumulator` joins content deltas and uses the server's final
   `usage.completion_tokens` instead of treating transport events as tokens.
-- Tests cover the metric formulas and a complete mock
-  `bytes -> SSE -> OpenAI delta -> metrics` stream.
+- `OpenAIHTTPClient` measures over an explicitly preconnected reusable socket,
+  so connection setup is outside the primary service-latency boundary.
+- Success, HTTP errors, transport errors, and partial streams have explicit
+  outcome types. Failed requests cannot silently enter successful TTFT or TPOT
+  distributions.
+- Tests exercise success, HTTP 500, pre-token timeout, and post-token disconnect
+  against a real deterministic localhost HTTP server.
 
 The repository does **not** claim vLLM or SGLang performance results yet.
 Local development currently validates benchmark correctness on Apple Silicon;
@@ -83,6 +88,7 @@ This repository owns:
 
 - [x] Define and test TTFT, TPOT, and end-to-end latency
 - [x] Measure a local mock SSE stream end to end
+- [x] Measure real localhost HTTP success and failure outcomes
 - [ ] Run a controlled vLLM GPU baseline
 - [ ] Sweep prompt length, output length, and concurrency
 - [ ] Evaluate prefix caching and chunked prefill

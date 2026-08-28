@@ -30,6 +30,23 @@ class StreamTimerTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "no output tokens"):
             timer.finish(output_tokens=1)
 
+    def test_records_timeout_without_inventing_ttft(self) -> None:
+        timer = StreamTimer(clock=StepClock(1.0, 3.0))
+
+        timing = timer.fail()
+
+        self.assertIsNone(timing.observed_ttft_ms)
+        self.assertAlmostEqual(timing.time_to_failure_ms, 2_000.0)
+
+    def test_retains_observed_ttft_for_a_partial_stream(self) -> None:
+        timer = StreamTimer(clock=StepClock(1.0, 1.1, 1.2))
+        timer.mark_first_token()
+
+        timing = timer.fail()
+
+        self.assertAlmostEqual(timing.observed_ttft_ms, 100.0)
+        self.assertAlmostEqual(timing.time_to_failure_ms, 200.0)
+
 
 if __name__ == "__main__":
     unittest.main()

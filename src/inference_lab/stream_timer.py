@@ -3,7 +3,7 @@ from __future__ import annotations
 from time import perf_counter
 from typing import Callable
 
-from .metrics import RequestTiming
+from .metrics import FailureTiming, RequestTiming
 
 
 class StreamTimer:
@@ -36,3 +36,19 @@ class StreamTimer:
         )
         self._finished = True
         return timing
+
+    def fail(self) -> FailureTiming:
+        if self._finished:
+            raise RuntimeError("request timing has already been finished")
+
+        timing = FailureTiming(
+            started_at_s=self._started_at_s,
+            first_token_at_s=self._first_token_at_s,
+            failed_at_s=self._clock(),
+        )
+        self._finished = True
+        return timing
+
+    @property
+    def has_observed_first_token(self) -> bool:
+        return self._first_token_at_s is not None

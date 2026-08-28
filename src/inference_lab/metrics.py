@@ -50,3 +50,34 @@ class RequestTiming:
             "tpot_ms": self.tpot_ms,
             "e2e_latency_ms": self.e2e_latency_ms,
         }
+
+
+@dataclass(frozen=True, slots=True)
+class FailureTiming:
+    """Timing evidence for a request that did not complete successfully."""
+
+    started_at_s: float
+    first_token_at_s: float | None
+    failed_at_s: float
+
+    def __post_init__(self) -> None:
+        if self.started_at_s > self.failed_at_s:
+            raise ValueError("invalid event order: failure preceded request start")
+        if self.first_token_at_s is not None and not (
+            self.started_at_s <= self.first_token_at_s <= self.failed_at_s
+        ):
+            raise ValueError(
+                "invalid event order: expected start <= first token <= failure"
+            )
+
+    @property
+    def observed_ttft_ms(self) -> float | None:
+        """Observed TTFT for a partial stream, otherwise undefined."""
+
+        if self.first_token_at_s is None:
+            return None
+        return (self.first_token_at_s - self.started_at_s) * 1_000
+
+    @property
+    def time_to_failure_ms(self) -> float:
+        return (self.failed_at_s - self.started_at_s) * 1_000
