@@ -7,6 +7,13 @@ from .metrics import FailureTiming
 from .openai_stream import StreamMeasurement
 
 
+FailureStatus: TypeAlias = Literal[
+    "http_error",
+    "transport_error",
+    "partial_stream",
+]
+
+
 @dataclass(frozen=True, slots=True)
 class SuccessfulRequest:
     measurement: StreamMeasurement
@@ -18,7 +25,7 @@ class SuccessfulRequest:
 
 @dataclass(frozen=True, slots=True)
 class FailedRequest:
-    status: Literal["http_error", "transport_error", "partial_stream"]
+    status: FailureStatus
     timing: FailureTiming
     error_type: str
     message: str

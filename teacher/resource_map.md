@@ -5,6 +5,7 @@
 - `docs/01_latency_metrics.zh-CN.md`: source of truth for the first latency checkpoint
 - `docs/02_sse_token_accounting.zh-CN.md`: protocol boundaries and exact token-accounting rules
 - `docs/03_http_outcomes.zh-CN.md`: preconnected request timing and failure-outcome semantics
+- `docs/04_aggregation_goodput.zh-CN.md`: success percentiles, failure counts, rates, and TTFT goodput
 - `src/inference_lab/`: benchmark-owned metric and timing code
 - `tests/`: executable definitions of accepted metric behavior
 

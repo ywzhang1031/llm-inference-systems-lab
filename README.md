@@ -7,7 +7,7 @@ analysis in this repository.
 
 ## Current checkpoint
 
-Phase 3 establishes trustworthy HTTP request outcomes before any GPU
+Phase 4 establishes trustworthy request aggregation before any GPU
 benchmark:
 
 - `RequestTiming` calculates time to first token (TTFT), time per output token
@@ -25,6 +25,9 @@ benchmark:
   distributions.
 - Tests exercise success, HTTP 500, pre-token timeout, and post-token disconnect
   against a real deterministic localhost HTTP server.
+- `aggregate_outcomes` reports successful TTFT/TPOT/E2E percentiles, explicit
+  failure counts, arrival rate, successful throughput, and request goodput
+  under a declared TTFT SLO.
 
 The repository does **not** claim vLLM or SGLang performance results yet.
 Local development currently validates benchmark correctness on Apple Silicon;
@@ -89,6 +92,7 @@ This repository owns:
 - [x] Define and test TTFT, TPOT, and end-to-end latency
 - [x] Measure a local mock SSE stream end to end
 - [x] Measure real localhost HTTP success and failure outcomes
+- [x] Aggregate success percentiles, failure counts, and TTFT goodput
 - [ ] Run a controlled vLLM GPU baseline
 - [ ] Sweep prompt length, output length, and concurrency
 - [ ] Evaluate prefix caching and chunked prefill

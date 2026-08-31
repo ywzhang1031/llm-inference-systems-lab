@@ -24,3 +24,10 @@ Move stale progress snapshots and retired plan items here instead of deleting th
 - Correctly rejected SSE content-event counts as output-token counts.
 - Implemented these semantics in a real localhost HTTP streaming client and deterministic test server.
 - Next stage: aggregate success percentiles, failure rate, throughput, and goodput without mixing their populations.
+
+## 2026-08-31 — Aggregation and TTFT goodput
+
+- Corrected the rate-unit calculation from `0.1/0.8/0.6` to `10/8/6 requests/s` for 100/80/60 requests over 10 seconds.
+- Implemented serializable success percentiles, failure counts, arrival rate, successful throughput, and TTFT goodput.
+- Kept partial-stream observed TTFT out of successful TTFT percentiles.
+- Next stage: bounded concurrent workload generation and raw per-request result persistence.
