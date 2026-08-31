@@ -31,3 +31,11 @@ Move stale progress snapshots and retired plan items here instead of deleting th
 - Implemented serializable success percentiles, failure counts, arrival rate, successful throughput, and TTFT goodput.
 - Kept partial-stream observed TTFT out of successful TTFT percentiles.
 - Next stage: bounded concurrent workload generation and raw per-request result persistence.
+
+## 2026-08-31 — Bounded closed-loop concurrency
+
+- Passed the closed-loop estimate `concurrency=2`, latency `1 s` -> about `2 requests/s`.
+- Passed the open-loop Little's Law estimate `4 requests/s`, latency `2 s` -> average concurrency about 8.
+- Implemented worker-scoped reusable HTTP clients, closed-loop slot refill, timestamped per-request records, serialization, and aggregation.
+- Verified concurrent requests against the deterministic localhost HTTP/SSE server.
+- Next stage: fixed-rate open-loop scheduling, scheduling lag, and versioned JSONL artifacts.

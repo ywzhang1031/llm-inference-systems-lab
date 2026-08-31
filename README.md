@@ -7,7 +7,7 @@ analysis in this repository.
 
 ## Current checkpoint
 
-Phase 4 establishes trustworthy request aggregation before any GPU
+Phase 5 establishes a bounded closed-loop workload runner before any GPU
 benchmark:
 
 - `RequestTiming` calculates time to first token (TTFT), time per output token
@@ -28,6 +28,9 @@ benchmark:
 - `aggregate_outcomes` reports successful TTFT/TPOT/E2E percentiles, explicit
   failure counts, arrival rate, successful throughput, and request goodput
   under a declared TTFT SLO.
+- `run_closed_loop` maintains a bounded number of in-flight requests, gives each
+  worker its own reusable client context, and preserves one timestamped raw
+  record for every submitted request.
 
 The repository does **not** claim vLLM or SGLang performance results yet.
 Local development currently validates benchmark correctness on Apple Silicon;
@@ -93,6 +96,7 @@ This repository owns:
 - [x] Measure a local mock SSE stream end to end
 - [x] Measure real localhost HTTP success and failure outcomes
 - [x] Aggregate success percentiles, failure counts, and TTFT goodput
+- [x] Run bounded closed-loop concurrent localhost workloads
 - [ ] Run a controlled vLLM GPU baseline
 - [ ] Sweep prompt length, output length, and concurrency
 - [ ] Evaluate prefix caching and chunked prefill
